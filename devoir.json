@@ -1,0 +1,131 @@
+[
+    {
+        "catalogue": {
+            "nom": "catalogue",
+            "produits": [
+                {
+                    "libelle": "Ferrari",
+                    "prix": 20000000,
+                    "quantite": 1,
+                    "categorie": {
+                        "libelle": "Voitures",
+                        "id": 1
+                    },
+                    "dateDePeremption": null,
+                    "id": 1
+                },
+                {
+                    "libelle": "Ananas",
+                    "prix": 2250,
+                    "quantite": 3,
+                    "categorie": {
+                        "libelle": "Fruits",
+                        "id": 2
+                    },
+                    "dateDePeremption": "20-02-2024",
+                    "id": 2
+                },
+                {
+                    "libelle": "carotte",
+                    "prix": 100,
+                    "quantite": 5,
+                    "categorie": {
+                        "libelle": "Legumes",
+                        "id": 3
+                    },
+                    "dateDePeremption": "20-02-2024",
+                    "id": 3
+                }
+            ]
+        },
+        "categorie": [
+            {
+                "libelle": "Voitures",
+                "id": 1
+            },
+            {
+                "libelle": "Fruits",
+                "id": 2
+            },
+            {
+                "libelle": "Legumes",
+                "id": 3
+            }
+        ],
+        "utilisateurs": [
+            {
+                "id": 0,
+                "nom": "Sow",
+                "prenom": "Alpha",
+                "email": "alph@gmail.com",
+                "motDePasse": "passer"
+            },
+            {
+                "id": 100,
+                "nom": "Diallo",
+                "prenom": "Aly",
+                "email": "aly@gmail.com",
+                "motDePasse": "passer"
+            },
+            {
+                "id": 49,
+                "nom": "to",
+                "prenom": "ta",
+                "email": "ta@",
+                "motDePasse": "pass"
+            },
+            {
+                "id": 1000,
+                "nom": "Yahaya",
+                "prenom": "Sow",
+                "email": "aaaaaaaaaa",
+                "motDePasse": "pass"
+            }
+        ],
+        "ventes": [
+            {
+                "id": 12,
+                "idProduit": 2,
+                "quantiteVendu": 2,
+                "prixDeVente": 4500
+            },
+            {
+                "id": 102,
+                "idProduit": 1,
+                "quantiteVendu": 1,
+                "prixDeVente": 20000000
+            },
+            {
+                "id": 67,
+                "idProduit": 3,
+                "quantiteVendu": 5,
+                "prixDeVente": 500
+            },
+            {
+                "id": 123,
+                "idProduit": 2,
+                "quantiteVendu": 2,
+                "prixDeVente": 4500
+            }
+        ],
+        "commandes": [
+            {
+                "id": 106,
+                "tableauDeVente": [
+                    12,
+                    102
+                ],
+                "date": "20-02-2024",
+                "idUtilisateur": 0
+            },
+            {
+                "id": 107,
+                "tableauDeVente": [
+                    12
+                ],
+                "date": "20-02-2024",
+                "idUtilisateur": 100
+            }
+        ]
+    }
+]
