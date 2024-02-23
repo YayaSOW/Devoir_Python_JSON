@@ -70,10 +70,19 @@ def readOnly(path)->list:
         with open(path,"r") as f:
             contenu=json.load(f)
             return (contenu)
-    except:
-        print("Fichier Introuvable!!!")
+    except FileNotFoundError:
+        print("Fichier introuvable!!!")
 
-def seConnecter(path):
+
+def writeOnly(path,value)->None:
+    if (os.path.exists(path)):
+        with open(path,"w") as f:
+            json.dump([value],f,indent=4)
+    else:
+        with open(path,"w") as f:
+            json.dump(value,f,indent=4)
+
+def creerUtilisateur(path):
     utilisateur=saisiUtilisateur()
     if(os.path.exists(path)):
         with open (path,"r") as f:
@@ -85,6 +94,34 @@ def seConnecter(path):
     else:
         with open (path,"w") as f1:
             json.dump([utilisateur],f1,indent=4)
+def seConnecter1(email,mdp):
+    utilisateurConnect=[]
+    contenu=readOnly(file)
+    for i in contenu:
+        utilisateurs=(i["utilisateurs"])
+        for utilisateur in utilisateurs:
+            if (utilisateur["email"] == email and utilisateur["motDePasse"] == mdp):  
+                print(utilisateur)
+                utilisateurConnect.append(utilisateur)
+                contenu[0]["utilisateurConnect"]=utilisateur
+        if(not(utilisateurConnect)):
+            print("email ou mot de passe incorrect")
+        else:
+            writeOnly(file,contenu)
+
+def deconnecter(email,mdp):
+    utilisateurConnect=[]
+    contenu=readOnly(file)
+    allData=contenu[0]
+    utilisateur=allData.get("utilisateurConnect")
+    if(not(utilisateur)):
+        print("Connecter vous d'abord!!!")
+    else:
+        print(utilisateur["email"],utilisateur["motDePasse"])
+        if(utilisateur["email"] == email and utilisateur["motDePasse"] == mdp):
+            print("vous etes deconnecter")
+            del contenu[0]["utilisateurConnect"]
+            writeOnly(file,contenu)
 
 
 def addNewProduit(path):
@@ -102,7 +139,6 @@ def addNewProduit(path):
 
 head=["ID","Libelle","Prix"]
 head1=["ID Commande","ID Produit","Libellé","Qunatité Vendu","Prix"]
-
 def addNewVente(path, vente:object):
     if(os.path.exists(path)):
         with open(path,"r") as f:
@@ -201,11 +237,16 @@ def afficheDetailCommande(path,idUser):
         contenuCommande=i["commandes"]
         contenuVente=i["ventes"]
         contenuProduit=i["catalogue"]["produits"]
+    # print(contenuProduit)
     for commande in contenuCommande:
         if (idUser == (commande["idUtilisateur"])) :
+            # print(commande["tableauDeVente"])
             listeIdVente=(commande["tableauDeVente"])
             for i in listeIdVente:
+                # print(i)
                 idVente.append(i)
+                # print(idVente)
+            # print(contenuVente)
             print("{:.^75}".format("Les détails de votre commande sont:"))
             detail,listeIdProduit=getVenteByCommande(listeIdVente,contenuVente)
             listeLibelleP=getProduitByVente(listeIdProduit,contenuProduit)
@@ -216,12 +257,174 @@ def afficheDetailCommande(path,idUser):
             writeTable(descriptionV,head1)
 
 
-# afficheDetailCommande(file,100)
-# createSend(file)
-
-
+def saisiCatalogue()->dict:
+    print("{:.^50}".format("Saisie du catalogue"))
+    nomCatalogue=input("Entrer le nom du catalogue:\n")
+    while True:
+        try:
+            nbreProduit=int(input("Entrer le nbre de produit(s) du catalogue:\n"))
+            break
+        except ValueError:
+            print("Vous avez saisie un caracteur!")
+    # print("")
+    catalogue= {
+            "nom": nomCatalogue,
+            "produits": []
+        },
+    for i in range(nbreProduit):
+        print(f"Produits N°{i+1}:\n")
+        produit=saisiProduit()
+        print(catalogue)
+        catalogue[0]["produits"].append(produit)
+    return catalogue
+# print(saisiCatalogue())
+# print(saisiCatalogue())
 def createCatalogue():
     db=readOnly(file)
-    print(db)
+    # print(db[0])
+    allData=(db[0])
+    s=saisiCatalogue()
+    # new=s
+    allData["catalogue1"]=dict(s)
+    writeOnly(file,allData)
+    # json.dump(s,l,indent=4)
+    # print(allData)
 
 # createCatalogue()
+
+def afficheProduitOfCatalogue(nom):
+    listeP=[]
+    db=readOnly(file)
+    # print(db[0]["catalogue1"])
+    # print(db[0].get("catalogue1"))
+    nomTable=(db[0].get(nom))
+    # print(nomTable)
+    if (not(nomTable)):
+        print("Ce catalogue n'existe pas")
+    else:
+        # print("le catalogue existe")
+        pdt_of_table=nomTable.get("produits")
+        # print(pdt_of_table)
+        for i in pdt_of_table:
+            # print(i)
+            # print(i.get("libelle"))
+            listeP.append((i.get("libelle")))
+        # print(s[0].get("libelle"))
+        # print(listeP)
+        if(not(listeP)):
+            print("Le catalogue ne contient pas de produits pour le moment")
+        else:
+            print("{:.^75}".format("La liste de(s) Produit(s) du catalogue est:"))
+            for i,item in enumerate(listeP,1):
+                print(f"{i}.{item}")
+
+# afficheProduitOfCatalogue("catalogue1")
+
+def trierProduit(catalogue_a_trier:str)->None:
+    tb_a_trier=[]
+    db=readOnly(file)
+    parti_A_Trier=db[0][catalogue_a_trier]["produits"]
+    # print(parti_A_Trier)
+    for i in parti_A_Trier:
+        # print(i["categorie"]["libelle"])
+        tb_a_trier.append((i["categorie"]["libelle"]))
+    # print(tb_a_trier)
+    listeTrier=sorted(tb_a_trier)
+    # print(listeTrier)
+    print("Produits trier par catégorie:\n")
+    for index in range(len(listeTrier)):
+        # print(listeTrier[index])
+        for i in parti_A_Trier:
+            # print(i["categorie"]["libelle"])
+            if(listeTrier[index] == i["categorie"]["libelle"]):
+                print(i)
+
+
+def afficheProduitByCategorie(nomCategorie,nomCatalogue):
+    listeP=[]
+    db=readOnly(file)
+    nomTable=(db[0].get("categorie"))
+    # print(nomTable)
+    if (not(nomTable)):
+        print("Cette categorie n'existe pas\n")
+    else:
+        for i in nomTable:
+            if (i["libelle"] == nomCategorie):
+                listeP.append(i["libelle"])
+        # print(listeP)
+        if (not(listeP)):
+            print("Ce produit n'existe pas\n")
+        else:
+            print("Produit de la catégorie {}".format(i["libelle"]))
+            produits=db[0][nomCatalogue]["produits"]
+            for i in produits:
+                if(i["categorie"]["libelle"] in listeP):
+                    print("- {}".format(i["libelle"]))
+
+
+
+def mettre_a_JourProduit(catalogue, produit_id, **kwargs):
+    for produit in catalogue["produits"]:
+        if produit["produit_id"] == produit_id:
+            for key, value in kwargs.items():
+                produit[key] = value
+
+
+
+def mettre_a_jour_prix(nouveauValeur, key, cle,id):
+    data = readOnly(file)
+    # print(data[0].keys())
+    attribut=data[0].keys()
+    contenu=data[0]
+    if(cle not in attribut ):
+        print("la cle n'existe pas !!!")
+    else:
+        # print(contenu[cle])
+        table=contenu[cle]
+        tableKeys=contenu[cle][0].keys()
+        # print(table,tableKeys)
+        if (key not in tableKeys):
+            print("la key n'existe pas !!!")
+        else:
+            for i in table:
+                print(i)
+                if (i["id"] == id):
+                    i[key]=nouveauValeur
+
+    import json
+
+def mettre_a_Jour(nouvelle_valeur, cle_produit, attribut, id_produit, nom_fichier):
+    data = readOnly(file)  
+    if cle_produit not in data[0]:
+        print("La clé spécifiée n'existe pas.")
+    produits = data[0][cle_produit]
+    if not produits:
+        print("La liste des produits est vide.")
+    if attribut not in produits[0]:
+        print("L'attribut spécifié n'existe pas dans les produits.")
+    for produit in produits:
+        if produit.get('id') == id_produit:
+            produit[attribut] = nouvelle_valeur
+            print("Produit mis à jour avec succès :", produit)
+            break
+    else:
+        print("Aucun produit trouvé avec l'ID spécifié.")
+
+    with open(nom_fichier, 'w') as f:
+        json.dump(data, f, indent=4)
+
+
+def etat_caisse_par_date(date, nom_fichier):
+    with open(nom_fichier, 'r') as f:
+        data = json.load(f)
+    
+    total_ventes = 0
+    print(catalogue)
+    for catalogue in data:
+        if 'ventes' in catalogue:
+            for vente in catalogue['ventes']:
+                if vente.get('date') == date:
+                    total_ventes += vente.get('prixDeVente') * vente.get('quantiteVendu')
+    
+    return total_ventes
+
